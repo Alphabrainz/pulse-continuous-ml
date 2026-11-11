@@ -1,0 +1,46 @@
+name: Continuous Model Retraining Pipeline (Firebase)
+
+on:
+  # Automated weekly retrain trigger (every Sunday at midnight UTC)
+  schedule:
+    - cron: '0 0 * * 0'
+  
+  # Manual on-demand execution via GitHub UI
+  workflow_dispatch:
+    inputs:
+      min_samples:
+        description: 'Minimum required labeled samples to trigger training'
+        required: false
+        default: '10'
+
+jobs:
+  continuous-train-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'pipeline/requirements.txt'
+
+      - name: Install Pipeline Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r pipeline/requirements.txt
+
+      - name: Execute Retraining Pipeline
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID || 'pulse-ai-portal' }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || '666870518780-2b5u95ma67ovhlon6suprpgvjanhnsnr.apps.googleusercontent.com' }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_REPO_ID: ${{ secrets.HF_REPO_ID }}
+          HF_MODEL_FILENAME: 'model.joblib'
+          MIN_SAMPLES_TO_TRAIN: ${{ github.event.inputs.min_samples || '10' }}
+        run: |
+          python pipeline/train.py

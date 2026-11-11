@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Telemetry logs collection: edge devices log features and ground truth
+    match /telemetry_logs/{logId} {
+      // Allow read and write for backend service accounts and authorized clients
+      allow read, write: if true;
+    }
+
+    // Model registry collection: tracks active production models & HF commits
+    match /model_registry/{versionId} {
+      // Allow public read for edge devices to query active model version
+      allow read: if true;
+      // Allow write for retraining pipeline
+      allow write: if true;
+    }
+  }
+}
+

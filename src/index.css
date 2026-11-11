@@ -1,0 +1,48 @@
+@import './styles/vibgyor.css';
+@import 'katex/dist/katex.min.css';
+
+/* Root application container */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: var(--bg-midnight);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Base interactive focus outline */
+*:focus-visible {
+  outline: 2px solid rgba(79, 43, 237, 0.6);
+  outline-offset: 2px;
+}
+
+/* Global typography enhancements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+  font-weight: 600;
+}
+
+p, span, li {
+  color: var(--text-secondary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
